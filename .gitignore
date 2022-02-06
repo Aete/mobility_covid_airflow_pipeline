@@ -1,2 +1,5 @@
 # python venv
 dendCapstone
+
+# pycache
+__pycache__
