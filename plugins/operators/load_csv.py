@@ -7,19 +7,6 @@ class LoadCSVOperator(BaseOperator):
 
     ui_color = '#F98866'
 
-    create_sql = """
-      CREATE TABLE IF NOT EXISTS {}
-        ( 
-          id SERIAL,
-          test INT
-        )
-    """
-    
-    insert_sql = """
-        INSERT INTO {}
-        {}
-        ;    
-    """
     @apply_defaults
     def __init__(self,
                  table,   
