@@ -22,4 +22,23 @@ class SqlQueries:
         incheon = EXCLUDED.incheon;
     '''
 
+
+    covid_vaccination_create = '''
+    CREATE TABLE IF NOT EXISTS covid19_vaccination
+        (
+         date TIMESTAMP WITHOUT TIME ZONE,
+         sido VARCHAR,
+         totalFirstCnt INT,
+         totalSecondCnt INT,
+         totalThirdCnt INT,
+         CONSTRAINT PK_covid19_vaccination PRIMARY KEY (date, sido)
+    )
+    '''
+
+    covid_vaccination_insert = '''
+        INSERT INTO covid19_vaccination
+        VALUES ('%sT00:00:00' :: TIMESTAMP WITHOUT TIME ZONE, '%s', %s, %s, %s)
+        ON CONFLICT ON CONSTRAINT PK_covid19_vaccination
+        DO NOTHING;
+    '''
     drop_table = 'DROP TABLE IF EXISTS {}'

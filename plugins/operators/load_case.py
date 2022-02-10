@@ -13,13 +13,13 @@ import json
 from urllib.parse import urlencode,quote_plus
 import xmltodict
 
-class LoadCOVIDAPIOperator(BaseOperator):
+class LoadCaseOperator(BaseOperator):
 
     ui_color = '#F98866'
     url_template = "{}?serviceKey={}&"+urlencode({quote_plus('pageNo') : '1',
-                                                    quote_plus('numOfRows') : '10',
-                                                    quote_plus('startCreateDt'):'20200110',
-                                                    quote_plus('endCreateDt'):'20211231'})
+                                                quote_plus('numOfRows') : '10',
+                                                quote_plus('startCreateDt'):'20200110',
+                                                quote_plus('endCreateDt'):'20211231'})
                 
     @apply_defaults
     def __init__(self,
@@ -32,7 +32,7 @@ class LoadCOVIDAPIOperator(BaseOperator):
                  key,   
                  *args, **kwargs):
 
-        super(LoadCOVIDAPIOperator, self).__init__(*args, **kwargs)
+        super(LoadCaseOperator, self).__init__(*args, **kwargs)
         self.table = table
         self.connection_id = connection_id
         self.create_sql = create_sql
@@ -49,7 +49,7 @@ class LoadCOVIDAPIOperator(BaseOperator):
 
         self.log.info(f"GET DATA FROM URL")
         # format a url 
-        target_url = LoadCOVIDAPIOperator.url_template.format(self.url,self.key)
+        target_url = LoadCaseOperator.url_template.format(self.url,self.key)
         # request and get a response from url
         response = requests.get(target_url)
 

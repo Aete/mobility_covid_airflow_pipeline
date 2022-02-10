@@ -1,7 +1,7 @@
-from operators.load_csv import LoadCSVOperator
-from operators.load_api import LoadCOVIDAPIOperator
+from operators.load_case import LoadCaseOperator
+from operators.load_vaccination import LoadVaccinationOperator
 
 __all__ = [
-    'LoadCSVOperator',
-    'LoadCOVIDAPIOperator'
+    'LoadCaseOperator',
+    'LoadVaccinationOperator'
 ]
