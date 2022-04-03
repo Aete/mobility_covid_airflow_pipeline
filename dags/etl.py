@@ -2,13 +2,14 @@ from datetime import datetime, timedelta
 import os
 from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
-from operators import (LoadCaseOperator, LoadVaccinationOperator)
+from operators import (LoadCaseOperator, LoadVaccinationOperator, LoadAppleIndex)
+from airflow.hooks.S3_hook import S3Hook
 
 from helpers import SqlQueries
-from helpers import (key, case_url, vaccination_url)
+from helpers import (key, case_url, vaccination_url, apple_bucket, apple_key)
 
 default_args = {
-    'start_date': datetime(2022, 2, 7),
+    'start_date': datetime(2022, 4, 2),
     'retries': 3,
     'retry_delay': timedelta(minutes = 5),
     'email_on_retry': False,
@@ -24,19 +25,6 @@ dag = DAG('etl_pipeline',
 
 start_operator = DummyOperator(task_id='Begin_execution',  dag=dag)
 end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
-
-# load_apple_index = LoadCSVOperator(
-#   task_id = 'load_apple_mobility',
-#   table = 'apple_mobility_index',
-#   connection_id = 'postgres_local' , 
-#   dag = dag)
-
-# load_seoul_living_migration = LoadCSVOperator(
-#   task_id = 'load_seoul_living_migration',
-#   table = 'seoul_living_migration',
-#   connection_id = 'postgres_local' ,
-#   dag = dag
-# )
 
 load_covid_cases = LoadCaseOperator(
   task_id = 'load_covid19_cases',
@@ -62,12 +50,27 @@ load_vaccination =  LoadVaccinationOperator(
   key = key
 )
 
+load_apple_index = LoadAppleIndex(
+    task_id = 'test5',
+    dag = dag,
+    table = 'apple_index',
+    postgres_connection_id = 'postgres_local',
+    s3_connection_id = 'aws_s3_connection',
+    create_sql = SqlQueries.apple_index_create,
+    insert_sql = SqlQueries.apple_index_insert, 
+    drop_sql = SqlQueries.drop_table,
+    s3_bucket = apple_bucket,
+    key = apple_key
+)
+
 # start_operator >> load_apple_index
 # start_operator >> load_seoul_living_migration
 start_operator >> load_covid_cases
 start_operator >> load_vaccination
+start_operator >> load_apple_index
 
 # load_seoul_living_migration >> end_operator
 # load_apple_index >> end_operator 
 load_covid_cases >> end_operator 
 load_vaccination >> end_operator
+load_apple_index >> end_operator

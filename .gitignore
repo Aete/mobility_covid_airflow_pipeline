@@ -3,3 +3,10 @@ dendCapstone
 
 # pycache
 __pycache__
+dags\__pycache__
+
+# airflow
+airflow
+
+# configuration
+config.py
