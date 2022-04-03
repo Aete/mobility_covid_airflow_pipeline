@@ -55,6 +55,8 @@ class LoadAppleIndex(BaseOperator):
         
         # stack dataframe to fit to the postgresql table
         df_apple_index = df_apple_index.set_index(['region','transportation_type']).stack().reset_index().rename(columns = {'level_2':'date', 0: 'index'})
+        df_apple_index['date'] = pd.to_datetime(df_apple_index['date'])
+        self.log.info(df_apple_index.columns)
 
         self.log.info(f"INSERT DATA")
         for i, row in df_apple_index.iterrows():

@@ -49,14 +49,14 @@ class SqlQueries:
          method VARCHAR,    
          date TIMESTAMP WITHOUT TIME ZONE,
          index DOUBLE PRECISION,
-         CONSTRAINT PK_apple PRIMARY KEY (date, method)
+         CONSTRAINT PK_apple_index PRIMARY KEY (date, region, method)
     )
     '''
 
     apple_index_insert = '''
     INSERT INTO apple_index
-        VALUES (%s, %s,'%sT00:00:00' :: TIMESTAMP WITHOUT TIME ZONE, %s)
-        ON CONFLICT ON CONSTRAINT PK_covid19_vaccination
+        VALUES ('%s', '%s','%sT00:00:00' :: TIMESTAMP WITHOUT TIME ZONE, '%s')
+        ON CONFLICT ON CONSTRAINT PK_apple_index
         DO NOTHING;   
     '''
 
