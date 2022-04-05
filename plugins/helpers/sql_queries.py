@@ -60,4 +60,25 @@ class SqlQueries:
         DO NOTHING;   
     '''
 
+    seoul_living_migration_create = '''
+    CREATE TABLE IF NOT EXISTS seoul_living_migration
+        (base_month INT,
+         dayofweek VARCHAR,
+         desti_region_hour SMALLINT,
+         origin_region_code INT,
+         desti_region_code INT,
+         sex VARCHAR(1),
+         age_group INT,
+         category VARCHAR(2),
+         duration DOUBLE PRECISION,
+         population DOUBLE PRECISION,
+         CONSTRAINT PK_seoul_living_migration PRIMARY KEY (base_month, dayofweek, desti_region_hour, origin_region_code, desti_region_code, sex, age_group, category)
+    )
+    '''
+
+    seoul_living_migration_insert = '''
+     INSERT INTO seoul_living_migration
+        VALUES (%s, '%s', %s, %s, %s,'%s', %s, '%s', %s, %s)
+    '''
+
     drop_table = 'DROP TABLE IF EXISTS {}'
