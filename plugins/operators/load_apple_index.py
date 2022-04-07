@@ -5,7 +5,7 @@ from airflow.providers.postgres.hooks.postgres import PostgresHook
 import pandas as pd
 from io import StringIO
 
-class LoadAppleIndex(BaseOperator):
+class LoadAppleIndexOperator(BaseOperator):
     ui_color = '#2196f3'
 
     @apply_defaults
@@ -19,7 +19,7 @@ class LoadAppleIndex(BaseOperator):
                  insert_sql,
                  drop_sql,
                  *args, **kwargs):
-        super(LoadAppleIndex, self).__init__(*args, **kwargs)
+        super(LoadAppleIndexOperator, self).__init__(*args, **kwargs)
         self.postgres_connection_id = postgres_connection_id
         self.s3_connection_id = s3_connection_id
         self.s3_bucket = s3_bucket
@@ -30,7 +30,10 @@ class LoadAppleIndex(BaseOperator):
         self.table = table
 
     def execute(self, context):
+        
         postgres = PostgresHook(self.postgres_connection_id)
+        
+        # please run this part when postgres doesn't have the table
         self.log.info(f"Init THE {self.table} TABLE")
         postgres.run(self.drop_sql.format(self.table))
         postgres.run(self.create_sql)

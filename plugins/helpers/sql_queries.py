@@ -80,5 +80,4 @@ class SqlQueries:
      INSERT INTO seoul_living_migration
         VALUES (%s, '%s', %s, %s, %s,'%s', %s, '%s', %s, %s)
     '''
-
     drop_table = 'DROP TABLE IF EXISTS {}'

@@ -7,7 +7,7 @@ import numpy as np
 import psycopg2
 from io import StringIO
 
-class LoadSeoulMigration(BaseOperator):
+class LoadSeoulMigrationOperator(BaseOperator):
     ui_color = '#2196f3'
 
     dow = {
@@ -44,7 +44,7 @@ class LoadSeoulMigration(BaseOperator):
                  insert_sql,
                  drop_sql,
                  *args, **kwargs):
-        super(LoadSeoulMigration, self).__init__(*args, **kwargs)
+        super(LoadSeoulMigrationOperator, self).__init__(*args, **kwargs)
         self.postgres_connection_id = postgres_connection_id
         self.s3_connection_id = s3_connection_id
         self.s3_bucket = s3_bucket
@@ -56,6 +56,8 @@ class LoadSeoulMigration(BaseOperator):
 
     def execute(self, context):
         postgres = PostgresHook(self.postgres_connection_id)
+        
+        # please run this part when postgres doesn't have the table
         self.log.info(f"Init THE {self.table} TABLE")
         postgres.run(self.drop_sql.format(self.table))
         postgres.run(self.create_sql)
