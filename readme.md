@@ -23,6 +23,7 @@ To clone this project, do this:
 ```git clone https://github.com/Aete/mobility_covid_airflow_pipeline.git ```
 
 ### Dependancy
+Please check ```requirement.txt```
 
 ## Data
 
