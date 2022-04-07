@@ -82,19 +82,19 @@ load_seoul_living_migration = LoadSeoulMigrationOperator(
 data_quality_check_case = DataQualityOperator(
     task_id = 'data_check_case',
     dag = dag,
-    table = 'covid_daily_cases',
+    table = 'covid19_daily_cases',
+    postgres_conn_id = 'postgres_local')
+
+data_quality_check_vaccination = DataQualityOperator(
+    task_id = 'data_check_vaccination',
+    dag = dag,
+    table = 'covid19_vaccination',
     postgres_conn_id = 'postgres_local')
 
 data_quality_check_apple = DataQualityOperator(
     task_id = 'data_check_apple',
     dag = dag,
     table = 'apple_index',
-    postgres_conn_id = 'postgres_local')
-
-data_quality_check_vaccination = DataQualityOperator(
-    task_id = 'data_check_vaccination',
-    dag = dag,
-    table = 'covid_vaccination',
     postgres_conn_id = 'postgres_local')
 
 data_quality_check_migration = DataQualityOperator(
