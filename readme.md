@@ -28,8 +28,6 @@ Please check ```requirement.txt```
 ## Data
 ![db diagram](./png.png)
 
-In the project, there are four tables: 'seoul_living_migration', 'covid19_daily_cases', 'covid19_vaccination', and 'apple_index'. The Main issue is that temporal information of 'seoul_living_migration' data consists of the month and day of the week, but the other datasets were based on daily information. In the project, I didn't aggregate the other tables by month because I still thought the day of the week could be important factor of urban mobility.  
-
 ### Seoul Living Migration
 This table is the statistically deduced number of citizens' trips between neighborhoods by the hour, day of the week, sex, and trip category in each month.
 - base_month: month and year ex) 202202
@@ -65,3 +63,13 @@ This table consists of the apple mobility index for Seoul
 - method: walking or driving,    
 - date: TIMESTAMP WITHOUT TIME ZONE,
 - index: index score
+
+### outlined data model (result)
+
+In the project, there are four tables: 'seoul_living_migration', 'covid19_daily_cases', 'covid19_vaccination', and 'apple_index'. The Main issue is that temporal information of 'seoul_living_migration' data consists of the month and day of the week, but the other datasets were based on daily information. Therefore, there is a further process should be needed to unify the temporal scale of each table. For example, I merged all of the tables into monthly temporal scale like below:
+
+|base_month|monthly_trips_count|avg_seoul_daily_cases|avg_seoul_vaccination|avg_apple_index|
+|:--------:|:--------:|:-------------------:|:-------------------:|:-------------:|
+|202202|800000000|17780.53|8186897.28|35.2957|
+
+(you can check the result of the process in the log of the 'data_check_result' task after the all of tasks are done.  Currently, I handled a movement dataset for Feb. 2022 due to AWS cost. So, in the result of the last data check task, it looks like Feb. 2022 is the only month that can be analyzed. But, there are the dataset files between Jan. 2020 and Feb.2022 in the Seoul open data portal. Therefore I think that is not a problem if I can pay more only for the AWS S3 bucket.) 
