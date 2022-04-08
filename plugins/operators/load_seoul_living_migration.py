@@ -74,14 +74,14 @@ class LoadSeoulMigrationOperator(BaseOperator):
         self.log.info(file_list)
         self.log.info('DATA PROCESSING & INSERTING')
 
-        for f in file_list[:1]:
+        for f in file_list:
             file_content = StringIO(s3_hook.get_key(
                 key = file_list[0],
                 bucket_name = self.s3_bucket
             ).get()['Body'].read().decode('cp949'))
             df_migration = self.process_data(file_content)
 
-            for i, row in df_migration.iloc[:100, :].iterrows():
+            for i, row in df_migration.iterrows():
                 # format a sql query
                 query = self.insert_sql % (row['base_month'],
                                            row['dayofweek'],
