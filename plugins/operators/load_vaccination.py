@@ -16,7 +16,7 @@ import xmltodict
 class LoadVaccinationOperator(BaseOperator):
 
     ui_color = '#F98866'
-    url_template = "{}?serviceKey={}&{}&perPage=100"
+    url_template = "{}?serviceKey={}&page={}&perPage=100"
                 
     @apply_defaults
     def __init__(self,
@@ -59,6 +59,7 @@ class LoadVaccinationOperator(BaseOperator):
             response = requests.get(LoadVaccinationOperator.url_template.format(self.url,self.key,i))
             df_response = pd.DataFrame(json.loads(response.text)['data'])
             list_result.append(df_response)
+
         df_vaccination = pd.concat(list_result, ignore_index = True)
         # convert data type
         df_vaccination['baseDate'] = pd.to_datetime(df_vaccination['baseDate'])

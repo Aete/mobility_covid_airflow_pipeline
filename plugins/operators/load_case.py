@@ -19,7 +19,7 @@ class LoadCaseOperator(BaseOperator):
     url_template = "{}?serviceKey={}&"+urlencode({quote_plus('pageNo') : '1',
                                                 quote_plus('numOfRows') : '10',
                                                 quote_plus('startCreateDt'):'20200110',
-                                                quote_plus('endCreateDt'):'20211231'})
+                                                quote_plus('endCreateDt'):'20220331'})
                 
     @apply_defaults
     def __init__(self,

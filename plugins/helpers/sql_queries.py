@@ -80,4 +80,40 @@ class SqlQueries:
      INSERT INTO seoul_living_migration
         VALUES (%s, '%s', %s, %s, %s,'%s', %s, '%s', %s, %s)
     '''
+
+    data_quality_check = '''
+        WITH monthly_cases AS 
+            (SELECT DATE_TRUNC('month', date) AS month, AVG(seoul) AS avg_new_cases
+             FROM covid19_daily_cases
+             GROUP BY month),
+        
+        monthly_vaccination AS
+            (SELECT DATE_TRUNC('month', date) AS month, AVG(totalSecondCnt) AS avg_vaccination
+             FROM covid19_vaccination
+             WHERE sido='서울특별시'
+             GROUP BY month),  
+
+        monthly_apple AS
+            (SELECT DATE_TRUNC('month', date) AS month, AVG(index) AS avg_apple_index
+             FROM apple_index
+             WHERE method='driving'
+             GROUP BY month),       
+        
+        monthly_info AS 
+            (SELECT to_char(c.month, 'YYYYMM')::INT AS month, avg_new_cases, avg_vaccination, avg_apple_index FROM monthly_cases AS c
+                LEFT JOIN monthly_vaccination AS v 
+                    ON c.month = v.month
+                LEFT JOIN monthly_apple AS a
+                    ON c.month = a.month),
+
+        seoul_living_migration_total AS
+            (SELECT base_month, SUM(population)
+             FROM seoul_living_migration
+             GROUP BY base_month)
+        
+        SELECT * FROM seoul_living_migration_total AS s 
+        FULL JOIN monthly_info AS m
+        ON s.base_month = m.month
+    '''
+
     drop_table = 'DROP TABLE IF EXISTS {}'

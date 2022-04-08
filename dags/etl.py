@@ -2,14 +2,14 @@ from datetime import datetime, timedelta
 import os
 from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
-from operators import (LoadCaseOperator, LoadVaccinationOperator, LoadAppleIndexOperator, LoadSeoulMigrationOperator, DataQualityOperator)
+from operators import (LoadCaseOperator, LoadVaccinationOperator, LoadAppleIndexOperator, LoadSeoulMigrationOperator, DataQualityCountOperator, DataQualityResultOperator)
 from airflow.hooks.S3_hook import S3Hook
 
 from helpers import SqlQueries
 from helpers import (key, case_url, vaccination_url, apple_bucket, apple_key)
 
 default_args = {
-    'start_date': datetime(2022, 4, 6),
+    'start_date': datetime(2022, 4, 7),
     'retries': 3,
     'retry_delay': timedelta(minutes = 5),
     'email_on_retry': False,
@@ -79,29 +79,39 @@ load_seoul_living_migration = LoadSeoulMigrationOperator(
 )
 
 # data quality check part
-data_quality_check_case = DataQualityOperator(
+data_quality_check_count_case = DataQualityCountOperator(
     task_id = 'data_check_case',
     dag = dag,
     table = 'covid19_daily_cases',
     postgres_conn_id = 'postgres_local')
 
-data_quality_check_vaccination = DataQualityOperator(
+data_quality_check_count_vaccination = DataQualityCountOperator(
     task_id = 'data_check_vaccination',
     dag = dag,
     table = 'covid19_vaccination',
     postgres_conn_id = 'postgres_local')
 
-data_quality_check_apple = DataQualityOperator(
+data_quality_check_count_apple = DataQualityCountOperator(
     task_id = 'data_check_apple',
     dag = dag,
     table = 'apple_index',
     postgres_conn_id = 'postgres_local')
 
-data_quality_check_migration = DataQualityOperator(
+data_quality_check_count_migration = DataQualityCountOperator(
     task_id = 'data_check_migration',
     dag = dag,
     table = 'seoul_living_migration',
     postgres_conn_id = 'postgres_local')
+
+
+# data quality check 2. Please check sql queries
+
+data_quality_check_result = DataQualityResultOperator(
+    task_id ='data_check_result',
+    dag = dag,
+    check_sql = SqlQueries.data_quality_check,
+    postgres_conn_id = 'postgres_local'
+)
 
 # set an order of the tasks
 start_operator >> load_covid_cases
@@ -109,12 +119,14 @@ start_operator >> load_vaccination
 start_operator >> load_apple_index
 start_operator >> load_seoul_living_migration
 
-load_covid_cases >> data_quality_check_case
-load_vaccination >> data_quality_check_vaccination
-load_apple_index >> data_quality_check_apple
-load_seoul_living_migration >> data_quality_check_migration
+load_covid_cases >> data_quality_check_count_case
+load_vaccination >> data_quality_check_count_vaccination
+load_apple_index >> data_quality_check_count_apple
+load_seoul_living_migration >> data_quality_check_count_migration
 
-data_quality_check_case >> end_operator
-data_quality_check_vaccination >> end_operator
-data_quality_check_apple >> end_operator
-data_quality_check_migration >> end_operator
+data_quality_check_count_case >> data_quality_check_result
+data_quality_check_count_vaccination >> data_quality_check_result
+data_quality_check_count_apple >> data_quality_check_result
+data_quality_check_count_migration >> data_quality_check_result
+
+data_quality_check_result >> end_operator

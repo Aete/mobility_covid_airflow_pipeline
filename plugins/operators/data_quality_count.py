@@ -2,7 +2,7 @@ from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
 
-class DataQualityOperator(BaseOperator):
+class DataQualityCountOperator(BaseOperator):
 
     ui_color = '#89DA59'
 
@@ -12,7 +12,7 @@ class DataQualityOperator(BaseOperator):
                  postgres_conn_id = 'postgres_local',
                  *args, **kwargs):
 
-        super(DataQualityOperator, self).__init__(*args, **kwargs)
+        super(DataQualityCountOperator, self).__init__(*args, **kwargs)
         self.table = table
         self.postgres_conn_id = postgres_conn_id
 
